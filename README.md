@@ -2,12 +2,12 @@
 
 ## Summary
 
-When `@fastify/static` is registered with [`preCompressed: true`](./server.ts#L16-L21), a route-level `reply.sendFile()` call can lose its per-request cache settings if the requested precompressed asset does not exist.
+When `@fastify/static` is registered with [`preCompressed: true`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L16-L21), a route-level `reply.sendFile()` call can lose its per-request cache settings if the requested precompressed asset does not exist.
 
 This linked reproduction reproduces that with two otherwise equivalent HTML routes:
 
-- [`/index.html`](./server.ts#L35-L42) works because [`public/index.html.gz`](./public/index.html.gz) exists.
-- [`/no-precompressed.html`](./server.ts#L23-L33) fails because there is no `public/no-precompressed.html.gz` fallback asset.
+- [`/index.html`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L35-L42) works because [`public/index.html.gz`](./public/index.html.gz) exists.
+- [`/no-precompressed.html`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L23-L33) fails because there is no `public/no-precompressed.html.gz` fallback asset.
 
 Both routes explicitly set `Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0`, but only the route without a matching precompressed file is overwritten back to the plugin default `public, max-age=2592000`.
 
@@ -37,8 +37,8 @@ node server.ts
 
 Expected behavior in this repo:
 
-- [`/index.html`](./server.ts#L35-L42) should return `no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0`
-- **[`/no-precompressed.html`](./server.ts#L23-L33) should also return `no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0`** -- this does not happen
+- [`/index.html`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L35-L42) should return `no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0`
+- **[`/no-precompressed.html`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L23-L33) should also return `no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0`** -- this does not happen
 - [`/style.css`](./public/style.css) should return the plugin default cache header
 
 ## Expected Result
@@ -84,12 +84,12 @@ The bug is in how `@fastify/static` threads `reply.sendFile(..., options)` throu
 When the plugin is registered, it builds a plugin-level `sendOptions` object from registration-time defaults such as `root`, `cacheControl`, and `maxAge`:
 
 - `sendOptions` construction at [`index.js#L43-L55`](https://github.com/fastify/fastify-static/blob/v9.0.0/index.js#L43-L55)
-- this repo's plugin defaults at [`server.ts#L16-L21`](./server.ts#L16-L21)
+- this repo's plugin defaults at [`server.ts#L16-L21`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L16-L21)
 
 Separately, the `reply.sendFile()` decorator accepts per-request overrides and passes them into `pumpSendToReply()` as the `opts` argument, which becomes `pumpOptions`:
 
 - `sendFile` decorator at [`index.js#L84-L95`](https://github.com/fastify/fastify-static/blob/v9.0.0/index.js#L84-L95)
-- affected route in this repro at [`server.ts#L23-L33`](./server.ts#L23-L33)
+- affected route in this repro at [`server.ts#L23-L33`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L23-L33)
 
 So for this call:
 
@@ -147,8 +147,8 @@ When the fallback succeeds, `reply.headers(headers)` applies the headers generat
 
 That is why this repro behaves differently for these two cases:
 
-1. [`/index.html`](./server.ts#L35-L42): `index.html.gz` exists, so the first `send()` call succeeds and keeps the per-request options.
-2. [`/no-precompressed.html`](./server.ts#L23-L33): `no-precompressed.html.gz` does not exist, so the fallback retry drops `pumpOptions` and reverts to plugin defaults.
+1. [`/index.html`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L35-L42): `index.html.gz` exists, so the first `send()` call succeeds and keeps the per-request options.
+2. [`/no-precompressed.html`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L23-L33): `no-precompressed.html.gz` does not exist, so the fallback retry drops `pumpOptions` and reverts to plugin defaults.
 
 So the failure mode is:
 
