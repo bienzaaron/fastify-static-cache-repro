@@ -1,10 +1,10 @@
-# `@fastify/static` `preCompressed` fallback drops per-request cache settings
+**AI Disclosure**: I have used AI tools to assist in debugging this issue and writing the following description and reproduction. I've fully reviewed the output and am confident in its accuracy.
 
 ## Summary
 
 When `@fastify/static` is registered with [`preCompressed: true`](./server.js#L16-L21), a route-level `reply.sendFile()` call can lose its per-request cache settings if the requested precompressed asset does not exist.
 
-This repo reproduces that with two otherwise equivalent HTML routes:
+This linked reproduction reproduces that with two otherwise equivalent HTML routes:
 
 - [`/index.html`](./server.js#L35-L42) works because [`public/index.html.gz`](./public/index.html.gz) exists.
 - [`/no-precompressed.html`](./server.js#L23-L33) fails because there is no `public/no-precompressed.html.gz` fallback asset.
