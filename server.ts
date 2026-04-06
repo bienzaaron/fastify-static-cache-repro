@@ -38,7 +38,7 @@ app.get("/index.html", async (request, reply) => {
       "cache-control",
       "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
     )
-    .sendFile("index.html", "/", { maxAge: 0, cacheControl: false });
+    .sendFile("index.html", root, { maxAge: 0, cacheControl: false });
 });
 
 const addr = await app.listen({ port: 0 });
