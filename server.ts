@@ -71,4 +71,8 @@ for (const url of urls) {
   );
 }
 
-await app.close();
+// if the input stream is not a tty, close app and exit cleanly
+// otherwise, continue running (probably an interactive shell)
+if (!process.stdin.isTTY) {
+  await app.close();
+}
