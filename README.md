@@ -6,7 +6,7 @@ When `@fastify/static` is registered with [`preCompressed: true`](https://github
 
 This linked reproduction reproduces that with two otherwise equivalent HTML routes:
 
-- [`/index.html`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L35-L42) works because [`public/index.html.gz`](./public/index.html.gz) exists.
+- [`/index.html`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L35-L42) works because [`public/index.html.gz`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/public/index.html.gz) exists.
 - [`/no-precompressed.html`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L23-L33) fails because there is no `public/no-precompressed.html.gz` fallback asset.
 
 Both routes explicitly set `Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0`, but only the route without a matching precompressed file is overwritten back to the plugin default `public, max-age=2592000`.
@@ -39,7 +39,7 @@ Expected behavior in this repo:
 
 - [`/index.html`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L35-L42) should return `no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0`
 - **[`/no-precompressed.html`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/server.ts#L23-L33) should also return `no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0`** -- this does not happen
-- [`/style.css`](./public/style.css) should return the plugin default cache header
+- [`/style.css`](https://github.com/bienzaaron/fastify-static-cache-repro/tree/main/public/style.css) should return the plugin default cache header
 
 ## Expected Result
 
